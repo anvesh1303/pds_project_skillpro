@@ -42,6 +42,7 @@ python app.py
 5.	Open your web browser and navigate to http://127.0.0.1:5000/ to view the application.
 
 
+
 Usage
 
 1.	Upload your resume in PDF format by clicking on the "Choose File" button.
@@ -49,3 +50,6 @@ Usage
 3.	The application will display the predicted job category, top skills for that category, skills present in your resume, missing skills, and your chances of getting shortlisted.
 4.	Optionally, you can view the top skills for different job categories by clicking on the respective category buttons.
 
+
+
+Note: Please remove comments on a block of code from app.py file for additional visualizations. The block is commented because of some issues.
