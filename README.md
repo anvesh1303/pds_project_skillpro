@@ -35,4 +35,3 @@ Usage
 3.	The application will display the predicted job category, top skills for that category, skills present in your resume, missing skills, and your chances of getting shortlisted.
 4.	Optionally, you can view the top skills for different job categories by clicking on the respective category buttons.
 
-![image](https://user-images.githubusercontent.com/98427744/236995901-587362bd-7b35-4505-8e7d-8dfae29610bc.png)
