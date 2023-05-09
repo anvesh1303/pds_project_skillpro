@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Resume Analyzer</h1>
+    <form action="/analyze" method="POST" enctype="multipart/form-data">
+        <label for="resume">Upload your resume (PDF):</label>
+        <input type="file" id="resume" name="resume" accept=".pdf" required>
+        <br>
+        <input type="submit" value="Analyze Resume">
+    </form>
+    <div id="results"></div>
+
+    <h2>Top Skills by Category</h2>
+    <div id="categories">
+        {% for category_id, category_name in categories %}
+            <button onclick="fetchTopSkills({{ category_id }})">{{ category_name }}</button>
+        {% endfor %}
+    </div>
+    <div id="top_skills"></div>
+
+    <script>
+
+        function fetchTopSkills(categoryId) {
+            $.getJSON('/top_skills/' + categoryId, function(data) {
+                var topSkillsDiv = $('#top_skills');
+                topSkillsDiv.html('<h3>Top skills:</h3><ul>');
+                for (var i = 0; i < data.length; i++) {
+                    topSkillsDiv.append('<li>' + data[i][0] + ': ' + data[i][1].toFixed(2) + '%</li>');
+                }
+                topSkillsDiv.append('</ul>');
+            });
+        }
+
+        $(document).ready(function() {
+            $('form').on('submit', function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '/analyze',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        var resultsDiv = $('#results');
+                        resultsDiv.html('');
+
+                        resultsDiv.append('<h2>Predicted category: ' + data.predicted_category + '</h2>');
+                        resultsDiv.append('<h3>Top skills for '+ data.predicted_category+': '+'</h3>');
+                        resultsDiv.append('<ul>');
+                        for (var i = 0; i < data.top_skills.length; i++) {
+                            resultsDiv.append('<li>' + data.top_skills[i][0] + ': ' + data.top_skills[i][1].toFixed(2) + '%</li>');
+                        }
+                        resultsDiv.append('</ul>');
+
+                        resultsDiv.append('<h3>Skills present in the uploaded resume:</h3>');
+                        resultsDiv.append('<ul>');
+                        for (var i = 0; i < data.resume_skills.length; i++) {
+                            
+                            resultsDiv.append('<li>' + data.resume_skills[i][0] + ': ' + data.resume_skills[i][1].toFixed(2) + '%</li>');
+                        }
+                        resultsDiv.append('</ul>');
+
+                        resultsDiv.append('<h3>Top Missing skills:</h3>');
+                        resultsDiv.append('<ul>');
+                        for (var i = 0; i < data.missing_skills.length; i++) {
+                            resultsDiv.append('<li>' + data.missing_skills[i][0] + ': ' + data.missing_skills[i][1].toFixed(2) + '%</li>');
+                        }
+                        resultsDiv.append('</ul>');
+
+                        resultsDiv.append('<h3>Chances of getting shortlisted for the ' + data.predicted_category + ' role: '+ data.shortlisting_chances.toFixed(2) + '%</h3>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
